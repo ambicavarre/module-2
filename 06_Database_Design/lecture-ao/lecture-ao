@@ -1,0 +1,51 @@
+START TRANSACTION;
+
+--DROP EXISTING
+DROP TABLE IF EXISTS customers, artists, arts, art_sales;
+
+--CREATE
+
+CREATE TABLE customers (
+	customer_id serial,
+	name varchar(65) NOT NULL,
+	address varchar(100) NOT NULL,
+	phone varchar(15) NOT NULL,
+	
+	constraint pk_customers primary key (customer_id)
+);
+
+CREATE TABLE artists (
+	artist_id serial,
+	name varchar(65) NOT NULL,
+	
+	constraint pk_artists primary key (artist_id)
+);
+
+CREATE TABLE arts (
+	art_id serial,
+	title varchar(64) NOT NULL,
+	artist_id int NOT NULL,
+	
+	constraint pk_arts primary key (art_id),
+	constraint fk_arts_artists foreign key (artist_id) references artists (artist_id) 
+);
+
+CREATE TABLE art_sales (
+	transaction_id serial,
+	customer_id int NOT NULL,
+	art_id int NOT NULL,
+	purchase_date timestamp NOT NULL,
+	price decimal (15, 2) NOT NULL,
+	
+	constraint pk_art_sales primary key (transaction_id),
+	constraint fk_art_sales_customer foreign key (customer_id) references customers(customer_id),
+	constraint fk_art_sales_arts foreign key (art_id) references arts(art_id)
+);
+
+--INSERT
+
+INSERT INTO public.customers(name, address, phone) VALUES ('Vito Corleone', '1313 Mockingbird Lane', '212-555-1212');
+INSERT INTO public.artists(name) VALUES ('Charles Manson');
+INSERT INTO public.arts(title, artist_id) VALUES ('Garbage Dump', 1);
+INSERT INTO public.art_sales(customer_id, art_id, purchase_date, price) VALUES (1, 1, NOW(), 500);
+COMMIT;
